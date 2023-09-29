@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+    font-family: 'Lovelo Black';
+    font-style: normal;
+    font-display: swap;
+    src: url('/fonts/Lovelo_Black.otf');
+}
