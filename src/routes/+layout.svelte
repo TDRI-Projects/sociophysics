@@ -11,13 +11,17 @@
         />
     </a>
     
-    <div class="max-w-screen-md mx-auto">
+    <div class="max-w-screen-lg mx-auto">
         <slot />
     </div>
 </div>
 
 <style lang="postcss">
     :global(h1) {
-        @apply text-4xl text-center font-bold font-lovelo-black;
+        @apply text-4xl text-center font-bold font-lovelo-black m-2;
+    }
+    :root {
+        --range-handle-focus: theme(colors.tdri.main);
+        --range-handle-border: theme(colors.tdri.main);
     }
 </style>

@@ -30,6 +30,7 @@ module.exports = {
         indent: ['error', 4],
         quotes: ['error', 'single'],
         semi: ['error', 'never'],
-        '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }]
+        '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+        '@typescript-eslint/ban-ts-comment': 'off'
     }
 }
