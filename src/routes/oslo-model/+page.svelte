@@ -27,14 +27,16 @@
     }
     reset()
 
+    let relax_sites: number[]
     function is_relaxed(): boolean {
-        return z_th.every((z_th_i, i) => z[i] <= z_th_i)
+        relax_sites = z_th.map((z_th_i, i) => z[i] > z_th_i ? i : -1).filter(i => i != -1)
+        return relax_sites.length == 0
     }
 
     function relax(): number {
-        let s_t = 0
+        let s_t = 0 // avalanche size: number of relaxations at time t
+
         while (!is_relaxed()) {
-            let relax_sites = z_th.map((z_th_i, i) => z[i] > z_th_i ? i : -1).filter(i => i != -1)
             s_t += relax_sites.length
 
             for (let i of relax_sites) {
