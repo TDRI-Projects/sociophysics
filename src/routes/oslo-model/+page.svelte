@@ -22,9 +22,11 @@
         return Math.random() < p_slider[0] ? 1 : 2
     }
 
+    let avalanches: number[] = []
     function reset() {
         z = Array(L_slider[0]).fill(0)
         z_th = [...Array(L_slider[0])].map(_ => generate_z_th())
+        avalanches = []
     }
     reset()
 
@@ -72,7 +74,8 @@
         is_running = true
         while (is_running) {
             z[0] += 1
-            await relax()
+            avalanches = [...avalanches, await relax()] // force svelte to update variable
+            
             if (!delay_every_relaxation) {
                 await sleep(delay_slider[0])
             }
@@ -81,6 +84,10 @@
 
     function stop() {
         is_running = false
+    }
+
+    function reset_avalances() {
+        avalanches = []
     }
 </script>
 
@@ -105,7 +112,7 @@
         <div id="button-row" class="flex flex-row justify-center gap-3">
             <button on:click={start}>Start</button>
             <button on:click={stop}>Stop</button>
-            <button on:click={reset} >Reset</button>
+            <button on:click={reset}>Reset</button>
         </div>
         <div>
             <p class="font-bold text-xl text-center">L: {L_slider[0]}</p>
@@ -148,6 +155,9 @@
         <div class="flex flex-row justify-center">
             <p class="font-bold text-xl text-center">Delay every relaxation</p>
             <input class="m-1" type="checkbox" bind:checked={delay_every_relaxation} />
+        </div>
+        <div id="button-row" class="flex flex-row justify-center gap-3 p-3">
+            <button on:click={reset_avalances}>Reset Avalanches</button>
         </div>
     </div>
 </div>
