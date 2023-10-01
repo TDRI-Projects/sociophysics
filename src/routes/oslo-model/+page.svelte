@@ -1,9 +1,15 @@
 <script lang="ts">
     // @ts-ignore
     import RangeSlider from 'svelte-range-slider-pips'
+    import { browser } from '$app/environment'
+    import { Chart, registerables } from 'chart.js'
+    import { onMount } from 'svelte'
+    import { logbin } from '$lib/utils/logbin'
+   
     let L_slider: number[] = [10]
     let p_slider: number[] = [0.5]
     let delay_slider: number[] = [200]
+    let a_slider: number[] = [1]
 
     let z: number[]
     let z_th: number[]
@@ -23,6 +29,43 @@
     }
 
     let avalanches: number[] = []
+
+    Chart.register(...registerables)
+    let avalanchesChartElement: HTMLCanvasElement
+    let chart: any
+    onMount(() => {
+        if (browser) {
+            chart = new Chart(avalanchesChartElement, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Avalanche Size Probability',
+                        data: []
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            type: 'logarithmic',
+                            title: {
+                                display: true,
+                                text: 'Avalanche Size'
+                            }
+                        },
+                        y: {
+                            type: 'logarithmic',
+                            title: {
+                                display: true,
+                                text: 'Probability'
+                            }
+                        }
+                    }
+                }
+            })
+        }
+    })
+
     function reset() {
         z = Array(L_slider[0]).fill(0)
         z_th = [...Array(L_slider[0])].map(_ => generate_z_th())
@@ -69,12 +112,18 @@
         return s_t
     }
 
+    function update_chart() {
+        chart.data.datasets[0].data = logbin(avalanches, a_slider[0])
+        chart.update()
+    }
+
     let is_running: boolean
     async function start() {
         is_running = true
         while (is_running) {
             z[0] += 1
             avalanches = [...avalanches, await relax()] // force svelte to update variable
+            update_chart()
             
             if (!delay_every_relaxation) {
                 await sleep(delay_slider[0])
@@ -158,6 +207,20 @@
         </div>
         <div id="button-row" class="flex flex-row justify-center gap-3 p-3">
             <button on:click={reset_avalances}>Reset Avalanches</button>
+        </div>
+        <canvas bind:this={avalanchesChartElement} />
+        <div>
+            <p class="font-bold text-xl text-center">a: {a_slider[0]}</p>
+            <RangeSlider
+                min={1}
+                max={1.5}
+                step={0.1}
+                first=label
+                last=label
+                pips
+                bind:values={a_slider}
+                on:change={update_chart}
+            />
         </div>
     </div>
 </div>
