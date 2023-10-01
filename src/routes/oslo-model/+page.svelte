@@ -3,6 +3,7 @@
     import RangeSlider from 'svelte-range-slider-pips'
     let L_slider: number[] = [10]
     let p_slider: number[] = [0.5]
+    let delay_slider: number[] = [200]
 
     let z: number[]
     let z_th: number[]
@@ -33,7 +34,12 @@
         return relax_sites.length == 0
     }
 
-    function relax(): number {
+    function sleep(ms: number) {
+        return new Promise(resolve => setTimeout(resolve, ms))
+    }
+
+    let delay_every_relaxation = true
+    async function relax(): Promise<number> {
         let s_t = 0 // avalanche size: number of relaxations at time t
 
         while (!is_relaxed()) {
@@ -52,15 +58,29 @@
                     z[i + 1] += 1
                 }
                 z_th[i] = generate_z_th()
+                if (delay_every_relaxation) {
+                    await sleep(delay_slider[0])
+                }
             }
         }
 
         return s_t
     }
 
-    function start() {
-        z[0] += 1
-        relax()
+    let is_running: boolean
+    async function start() {
+        is_running = true
+        while (is_running) {
+            z[0] += 1
+            await relax()
+            if (!delay_every_relaxation) {
+                await sleep(delay_slider[0])
+            }
+        }
+    }
+
+    function stop() {
+        is_running = false
     }
 </script>
 
@@ -84,7 +104,7 @@
     <div class="flex flex-col lg:m-5">
         <div id="button-row" class="flex flex-row justify-center gap-3">
             <button on:click={start}>Start</button>
-            <button>Stop</button>
+            <button on:click={stop}>Stop</button>
             <button on:click={reset} >Reset</button>
         </div>
         <div>
@@ -111,6 +131,23 @@
                 bind:values={p_slider}
                 on:change={reset}
             />
+        </div>
+        <div>
+            <p class="font-bold text-xl text-center">Delay: {delay_slider[0]} ms</p>
+            <RangeSlider
+                min={20}
+                max={200}
+                step={10}
+                first=label
+                last=label
+                suffix=" ms"
+                pips
+                bind:values={delay_slider}
+            />
+        </div>
+        <div class="flex flex-row justify-center">
+            <p class="font-bold text-xl text-center">Delay every relaxation</p>
+            <input class="m-1" type="checkbox" bind:checked={delay_every_relaxation} />
         </div>
     </div>
 </div>
