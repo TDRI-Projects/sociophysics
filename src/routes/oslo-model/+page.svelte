@@ -167,7 +167,7 @@
             <p class="font-bold text-xl text-center">L: {L_slider[0]}</p>
             <RangeSlider
                 min={10}
-                max={20}
+                max={50}
                 first=label
                 last=label
                 pips
