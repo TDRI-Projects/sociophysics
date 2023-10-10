@@ -9,4 +9,8 @@
         name="Oslo Model"
         path="/oslo-model"
     />
+    <Showcase
+        name="Schelling Model"
+        path="/schelling-model"
+    />
 </div>
