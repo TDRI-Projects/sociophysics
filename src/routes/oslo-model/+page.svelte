@@ -168,6 +168,7 @@
             <RangeSlider
                 min={10}
                 max={50}
+                step={5}
                 first=label
                 last=label
                 pips
