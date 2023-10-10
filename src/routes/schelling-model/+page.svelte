@@ -94,6 +94,9 @@
     }
 </script>
 
+<svelte:head>
+	<title>Schelling Model</title>
+</svelte:head>
 <h1>Schelling Model</h1>
 <div class="grid lg:grid-cols-2 gap-2 my-2">
     <div 

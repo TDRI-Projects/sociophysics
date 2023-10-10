@@ -140,6 +140,10 @@
     }
 </script>
 
+<svelte:head>
+	<title>Oslo Model</title>
+</svelte:head>
+
 <h1>Oslo Model</h1>
 <div class="grid lg:grid-cols-2 gap-2 my-2">
     <div 
