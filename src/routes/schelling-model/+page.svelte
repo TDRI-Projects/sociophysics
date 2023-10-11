@@ -142,7 +142,6 @@
                 last=label
                 pips
                 bind:values={T_slider}
-                on:change={reset}
             />
         </div>
         <div>
