@@ -17,4 +17,8 @@
         name="Schelling Model"
         path="/schelling-model"
     />
+    <Showcase
+        name="Sugarscape Model"
+        path="/sugarscape-model"
+    />
 </div>
