@@ -107,22 +107,19 @@ export class Sugarscape {
 
     add_agent() {
         const agent_locations = this.get_agent_locations()
-        let added = false
-        while (!added) {
+        while (this.agents.length < 400) {
             const i = Math.floor(Math.random() * 50)
             const j = Math.floor(Math.random() * 50)
-            if (!agent_locations.includes([i, j])) {
+            if (!agent_locations.find(([x, y]) => x === i && y === j)) {
                 this.agents.push(new Agent(i, j))
-                added = true
+                agent_locations.push([i, j])
             }
         }
     }
 
     constructor() {
         this.cells = Array(50).fill(0).map((_, j) => Array(50).fill(0).map((_, i) => new Cell(i, j)))
-        for (let i = 0; i < 400; i++) {
-            this.add_agent()
-        }
+        this.add_agent()
     }
 
     iterate() {
@@ -139,5 +136,9 @@ export class Sugarscape {
                 cell.grow()
             }
         }
+    }
+
+    get_agent_sugar() {
+        return this.agents.map(agent => agent.sugar)
     }
 }

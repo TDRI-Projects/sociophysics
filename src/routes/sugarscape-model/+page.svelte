@@ -2,8 +2,47 @@
     // @ts-ignore
     import RangeSlider from 'svelte-range-slider-pips'
     import { Sugarscape } from '$lib/models/sugarscape'
+    import { browser } from '$app/environment'
+    import { Chart, registerables } from 'chart.js'
+    import { onMount } from 'svelte'
+    import { logbin } from '$lib/utils/logbin'
 
-    let delay_slider: number[] = [200]
+    Chart.register(...registerables)
+    let sugarChartElement: HTMLCanvasElement
+    let chart: any
+    onMount(() => {
+        if (browser) {
+            chart = new Chart(sugarChartElement, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Sugar Distribution',
+                        data: []
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            type: 'logarithmic',
+                            title: {
+                                display: true,
+                                text: 'Sugar'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Probability'
+                            }
+                        }
+                    }
+                }
+            })
+        }
+    })
+    
+    let delay_slider: number[] = [300]
 
     let sugarscape_model: Sugarscape
     let sugar_array: number[][] = []
@@ -13,7 +52,14 @@
         agent_array = sugarscape_model.get_agent_locations()
     }
 
+    function update_chart() {
+        chart.data.datasets[0].data = logbin(sugarscape_model.get_agent_sugar(), 1)
+        chart.update()
+    }
+
+    let is_running: boolean
     function reset() {
+        is_running = false
         sugarscape_model = new Sugarscape()
         update_grid()
     }
@@ -23,14 +69,13 @@
         return new Promise(resolve => setTimeout(resolve, ms))
     }
 
-    let is_running: boolean
     async function start() {
         is_running = true
         while (is_running) {
             sugarscape_model.iterate()
             update_grid()
+            update_chart()
             await sleep(delay_slider[0])
-            break
         }
     }
 
@@ -69,9 +114,9 @@
         <div>
             <p class="font-bold text-xl text-center">Delay: {delay_slider[0]} ms</p>
             <RangeSlider
-                min={20}
-                max={200}
-                step={10}
+                min={100}
+                max={300}
+                step={50}
                 first=label
                 last=label
                 suffix=" ms"
@@ -79,6 +124,7 @@
                 bind:values={delay_slider}
             />
         </div>
+        <canvas bind:this={sugarChartElement} />
     </div>
 </div>
 
