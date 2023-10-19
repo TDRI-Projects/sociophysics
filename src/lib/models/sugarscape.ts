@@ -45,6 +45,7 @@ class Agent {
     sugar: number
     readonly metabolism: number
     readonly vision: number
+    lifespan: number
 
     constructor(i: number, j: number) {
         this.i = i
@@ -55,6 +56,8 @@ class Agent {
         this.metabolism = 1 + Math.round(Math.random() * 3)
         // Between 1 and 6
         this.vision = 1 + Math.round(Math.random() * 5)
+        // Between 60 and 100
+        this.lifespan = 60 + Math.round(Math.random() * 40)
     }
 
     move(cells: Cell[][], agent_locations: number[][]) {
@@ -89,11 +92,8 @@ class Agent {
         this.sugar += cells[this.j][this.i].sugar
         cells[this.j][this.i].sugar = 0
         this.sugar -= this.metabolism
-        if (this.sugar < 0) {
-            return true
-        } else {
-            return false
-        }
+        this.lifespan -= 1
+        return this.lifespan == 0 || this.sugar < 0
     }
 }
 
@@ -107,7 +107,7 @@ export class Sugarscape {
 
     add_agent() {
         const agent_locations = this.get_agent_locations()
-        while (this.agents.length < 400) {
+        while (this.agents.length < 250) {
             const i = Math.floor(Math.random() * 50)
             const j = Math.floor(Math.random() * 50)
             if (!agent_locations.find(([x, y]) => x === i && y === j)) {
@@ -136,6 +136,8 @@ export class Sugarscape {
                 cell.grow()
             }
         }
+
+        this.add_agent()
     }
 
     get_agent_sugar() {

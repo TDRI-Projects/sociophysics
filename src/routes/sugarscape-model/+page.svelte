@@ -5,7 +5,7 @@
     import { browser } from '$app/environment'
     import { Chart, registerables } from 'chart.js'
     import { onMount } from 'svelte'
-    import { logbin } from '$lib/utils/logbin'
+    import { cdf } from '$lib/utils/cdf'
 
     Chart.register(...registerables)
     let sugarChartElement: HTMLCanvasElement
@@ -53,7 +53,7 @@
     }
 
     function update_chart() {
-        chart.data.datasets[0].data = logbin(sugarscape_model.get_agent_sugar(), 1)
+        chart.data.datasets[0].data = cdf(sugarscape_model.get_agent_sugar())
         chart.update()
     }
 
