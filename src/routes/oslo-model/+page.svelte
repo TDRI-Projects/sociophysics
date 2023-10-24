@@ -60,7 +60,8 @@
                                 text: 'Probability'
                             }
                         }
-                    }
+                    },
+                    aspectRatio: 1
                 }
             })
         }
