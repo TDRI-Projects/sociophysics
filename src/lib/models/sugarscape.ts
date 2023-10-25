@@ -39,6 +39,17 @@ class Cell {
     }
 }
 
+interface AgentAttributes {
+    sugar_min: number
+    sugar_max: number
+    metabolism_min: number
+    metabolism_max: number
+    vision_min: number
+    vision_max: number
+    lifespan_min: number
+    lifespan_max: number
+}
+
 class Agent {
     i: number
     j: number
@@ -47,17 +58,17 @@ class Agent {
     readonly vision: number
     lifespan: number
 
-    constructor(i: number, j: number) {
+    constructor(i: number, j: number, agent_attributes: AgentAttributes) {
         this.i = i
         this.j = j
         // Between 5 and 25
-        this.sugar = 5 + Math.round(Math.random() * 20)
+        this.sugar = agent_attributes.sugar_min + Math.round(Math.random() * (agent_attributes.sugar_max - agent_attributes.sugar_min))
         // Between 1 and 4
-        this.metabolism = 1 + Math.round(Math.random() * 3)
+        this.metabolism = agent_attributes.metabolism_min + Math.round(Math.random() * (agent_attributes.metabolism_max - agent_attributes.metabolism_min))
         // Between 1 and 6
-        this.vision = 1 + Math.round(Math.random() * 5)
+        this.vision = agent_attributes.vision_min + Math.round(Math.random() * (agent_attributes.vision_max - agent_attributes.vision_min))
         // Between 60 and 100
-        this.lifespan = 60 + Math.round(Math.random() * 40)
+        this.lifespan = agent_attributes.lifespan_min + Math.round(Math.random() * (agent_attributes.lifespan_max - agent_attributes.lifespan_min))
     }
 
     move(cells: Cell[][], agent_locations: number[][]) {
@@ -100,6 +111,8 @@ class Agent {
 export class Sugarscape {
     readonly cells: Cell[][] = []
     agents: Agent[] = []
+    agent_attributes: AgentAttributes
+    N: number
 
     get_agent_locations() {
         return this.agents.map(agent => [agent.i, agent.j])
@@ -107,18 +120,20 @@ export class Sugarscape {
 
     add_agent() {
         const agent_locations = this.get_agent_locations()
-        while (this.agents.length < 250) {
+        while (this.agents.length < this.N) {
             const i = Math.floor(Math.random() * 50)
             const j = Math.floor(Math.random() * 50)
             if (!agent_locations.find(([x, y]) => x === i && y === j)) {
-                this.agents.push(new Agent(i, j))
+                this.agents.push(new Agent(i, j, this.agent_attributes))
                 agent_locations.push([i, j])
             }
         }
     }
 
-    constructor() {
+    constructor(agent_attributes: AgentAttributes, N: number) {
         this.cells = Array(50).fill(0).map((_, j) => Array(50).fill(0).map((_, i) => new Cell(i, j)))
+        this.agent_attributes = agent_attributes
+        this.N = N
         this.add_agent()
     }
 
@@ -142,5 +157,13 @@ export class Sugarscape {
 
     get_agent_sugar() {
         return this.agents.map(agent => agent.sugar)
+    }
+
+    update_agent_attributes(agent_attributes: AgentAttributes) {
+        this.agent_attributes = agent_attributes
+    }
+
+    update_N(N: number) {
+        this.N = N
     }
 }

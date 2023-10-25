@@ -21,6 +21,7 @@
         @apply text-4xl text-center font-bold font-lovelo-black m-2;
     }
     :root {
+        --range-handle: theme(colors.tdri.main);
         --range-handle-focus: theme(colors.tdri.main);
         --range-handle-border: theme(colors.tdri.main);
     }

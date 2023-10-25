@@ -59,12 +59,44 @@
     }
 
     let is_running: boolean
+    let sugar_slider: number[] = [5, 25]
+    let metabolism_slider: number[] = [1, 4]
+    let vision_slider: number[] = [1, 6]
+    let lifespan_slider: number[] = [60, 100]
+    let N_slider = [250]
     function reset() {
         is_running = false
-        sugarscape_model = new Sugarscape()
+        sugarscape_model = new Sugarscape({
+            sugar_min: sugar_slider[0],
+            sugar_max: sugar_slider[1],
+            metabolism_min: metabolism_slider[0],
+            metabolism_max: metabolism_slider[1],
+            vision_min: vision_slider[0],
+            vision_max: vision_slider[1],
+            lifespan_min: lifespan_slider[0],
+            lifespan_max: lifespan_slider[1]
+        },
+        N_slider[0])
         update_grid()
     }
     reset()
+
+    function update_attributes() {
+        sugarscape_model.update_agent_attributes({
+            sugar_min: sugar_slider[0],
+            sugar_max: sugar_slider[1],
+            metabolism_min: metabolism_slider[0],
+            metabolism_max: metabolism_slider[1],
+            vision_min: vision_slider[0],
+            vision_max: vision_slider[1],
+            lifespan_min: lifespan_slider[0],
+            lifespan_max: lifespan_slider[1]
+        })
+    }
+
+    function update_N() {
+        sugarscape_model.update_N(N_slider[0])
+    }
 
     function sleep(ms: number) {
         return new Promise(resolve => setTimeout(resolve, ms))
@@ -123,6 +155,75 @@
                 suffix=" ms"
                 pips
                 bind:values={delay_slider}
+            />
+        </div>
+        <div>
+            <p class="font-bold text-xl text-center">N: {N_slider[0]}</p>
+            <RangeSlider
+                min={50}
+                max={500}
+                step={50}
+                first=label
+                last=label
+                pips
+                bind:values={N_slider}
+                on:change={update_N}
+            />
+        </div>
+        <div>
+            <p class="font-bold text-xl text-center">Initial Sugar: {sugar_slider.join(' to ')}</p>
+            <RangeSlider
+                min={0}
+                max={50}
+                step={5}
+                first=label
+                last=label
+                pips
+                range=true
+                bind:values={sugar_slider}
+                on:change={update_attributes}
+            />
+        </div>
+        <div>
+            <p class="font-bold text-xl text-center">Metabolism: {metabolism_slider.join(' to ')}</p>
+            <RangeSlider
+                min={0}
+                max={10}
+                step={1}
+                first=label
+                last=label
+                pips
+                range=true
+                bind:values={metabolism_slider}
+                on:change={update_attributes}
+            />
+        </div>
+        <div>
+            <p class="font-bold text-xl text-center">Vision: {vision_slider.join(' to ')}</p>
+            <RangeSlider
+                min={1}
+                max={20}
+                step={1}
+                first=label
+                last=label
+                pips
+                range=true
+                bind:values={vision_slider}
+                on:change={update_attributes}
+            />
+        </div>
+        <div>
+            <p class="font-bold text-xl text-center">Lifespan: {lifespan_slider.join(' to ')}</p>
+            <RangeSlider
+                min={10}
+                max={200}
+                step={10}
+                first=label
+                last=label
+                pips
+                range=true
+                bind:values={lifespan_slider}
+                on:change={update_attributes}
             />
         </div>
         <canvas bind:this={sugarChartElement} />
